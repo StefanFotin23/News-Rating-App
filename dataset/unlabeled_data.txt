@@ -1,0 +1,14 @@
+Title: "AI Breakthrough Could Revolutionize Healthcare"
+Content: "Scientists at MIT have unveiled a deep-learning AI model capable of detecting rare diseases with 98% accuracy. Experts believe this could transform the medical industry."
+Source: "TechNewsDaily"
+Published: "2025-05-06"
+
+Title: "New European Economic Policies Stir Debate"
+Content: "The European Central Bank has introduced new financial policies aimed at stabilizing inflation rates. Some economists argue the regulations may have unintended consequences."
+Source: "GlobalEconomyJournal"
+Published: "2025-05-05"
+
+Title: "Electric Vehicles Expected to Dominate Market by 2030"
+Content: "Automotive analysts predict that electric vehicles will account for over 75% of total car sales worldwide by the end of the decade."
+Source: "AutoTrendsWorld"
+Published: "2025-05-04"

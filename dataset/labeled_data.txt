@@ -1,0 +1,23 @@
+Title: "NASA Announces New Mars Mission Plan"
+Content: "NASA has confirmed the next Mars rover mission, citing new breakthroughs in autonomous robotics. Scientists expect launch preparations to be completed within three years."
+Source: "NASA.gov"
+References: ["ScienceDaily", "AstronomyWorld", "SpaceX Research"]
+Credibility Score: 9/10
+Category: Science & Technology
+Sentiment: Positive
+
+Title: "Celebrity Scandal Trends on Social Media"
+Content: "Rumors about a well-known actor have surfaced online, though no official statements have been made."
+Source: "EntertainmentBuzz.net"
+References: []
+Credibility Score: 3/10
+Category: Entertainment & Gossip
+Sentiment: Neutral
+
+Title: "Government Proposes Stricter Regulations on AI Usage"
+Content: "The proposed legislation aims to control AI usage in critical sectors, addressing concerns over security and job displacement."
+Source: "GovTechReview"
+References: ["TechPolicyWatch", "AI Ethics Group"]
+Credibility Score: 8/10
+Category: Politics & Regulations
+Sentiment: Neutral
