@@ -1,0 +1,19 @@
+FROM python:3.11-slim
+WORKDIR /app
+
+# Install dependencies
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Copy training scripts and dataset
+COPY python/word2vec_model.py python/fast_text_model.py /app/python/
+COPY dataset/ /app/dataset/
+
+# Create models directory
+RUN mkdir -p /app/models
+
+# Declare the volume correctly
+VOLUME ["/app/models"]
+
+# Run training scripts on container startup
+CMD ["python", "/app/python/word2vec_model.py", "&&", "python", "/app/python/fast_text_model.py"]

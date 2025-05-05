@@ -1,0 +1,10 @@
+FROM python:3.11-slim
+WORKDIR /app
+
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+
+COPY python/news-rating-app.py /app/python/
+COPY models/ /app/models/
+
+CMD ["python", "/app/python/news-rating-app.py"]
