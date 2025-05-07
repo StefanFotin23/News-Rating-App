@@ -15,10 +15,10 @@ build:
 	docker build -t $(APP_NAME)-app -f $(DOCKERFILE_DIR)/$(DOCKERFILE_MODEL) .
 
 train:
-	docker run --rm -v $(shell pwd)/models:/app/models $(APP_NAME)-model
+	docker run --rm -v $(shell pwd)/model:/app/model $(APP_NAME)-model
 
 run:
-	docker run --rm -v $(shell pwd)/models:/app/models $(APP_NAME)-app
+	docker run --rm -v $(shell pwd)/model:/app/model $(APP_NAME)-app
 
 clean:
 	docker rmi $(APP_NAME)-app $(APP_NAME)-model || true

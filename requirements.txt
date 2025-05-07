@@ -1,2 +1,6 @@
+bs4
 gensim
 spacy
+requests
+beautifulsoup4
+pysentimiento

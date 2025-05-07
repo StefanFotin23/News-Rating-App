@@ -5,6 +5,6 @@ COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
 COPY python/news-rating-app.py /app/python/
-COPY models/ /app/models/
+COPY model/ /app/model/
 
 CMD ["python", "/app/python/news-rating-app.py"]
