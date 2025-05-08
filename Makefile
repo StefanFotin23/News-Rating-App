@@ -3,18 +3,18 @@ DOCKERFILE_DIR=dockerfile
 DOCKERFILE_MODEL=Dockerfile-app
 DOCKERFILE_MODEL_BUILD=Dockerfile-model-build
 
-.PHONY: build run clean all train
+.PHONY: build run clean all run_model
 
 all:
 	make build
-	make train
+	make run_model
 	make run
 
 build:
 	docker build -t $(APP_NAME)-model -f $(DOCKERFILE_DIR)/$(DOCKERFILE_MODEL_BUILD) .
 	docker build -t $(APP_NAME)-app -f $(DOCKERFILE_DIR)/$(DOCKERFILE_MODEL) .
 
-train:
+run_model:
 	docker run --rm -v $(shell pwd)/model:/app/model $(APP_NAME)-model
 
 run:

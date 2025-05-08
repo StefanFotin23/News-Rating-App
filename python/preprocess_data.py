@@ -3,6 +3,7 @@ import json
 import requests
 import spacy
 from bs4 import BeautifulSoup
+from transformers import AutoTokenizer
 
 # Step 1: Define API Key & URL
 API_KEY = "7bc719a0-6dc4-465d-a800-583af38ccdaa"
@@ -14,17 +15,27 @@ news_data_file = "/app/model/news_data.json"
 # Load spaCy model
 nlp = spacy.load("en_core_web_sm")
 
+# Load RoBERTa tokenizer (same one used by PySentimiento)
+bert_tokenizer = AutoTokenizer.from_pretrained("roberta-base")
+
 def parse_html(html_content):
     soup = BeautifulSoup(html_content, "html.parser")
     return soup.get_text(separator=" ")  # Extract plain text
 
-def tokenize_dataset(posts):
-    return [preprocess_text(post["body"]) for post in posts]
+def tokenize_post(post, tokenizer="spacy"):
+    if tokenizer == "spacy":
+        tokenized_post_body = spacy_tokenize(post)
+    elif tokenizer == "bert":
+        tokenized_post_body = bert_tokenize(post)
+    return tokenized_post_body
 
-def preprocess_text(text):
+def spacy_tokenize(post):
     """Tokenizes, removes stopwords, and applies lemmatization."""
-    doc = nlp(text)
+    doc = nlp(post["body"])  # Tokenize only the body
     return [token.lemma_.lower() for token in doc if not token.is_stop and token.is_alpha]
+
+def bert_tokenize(post):
+    return bert_tokenizer(post["body"], truncation=True, padding=True, return_tensors="pt")
 
 def load_posts(file_path):
     """Reads a JSON file and returns a list of posts."""
@@ -91,12 +102,7 @@ def get_news_data(topic=None, no_of_news=50):
     except Exception as e:
         print(f"❌ Error saving file: {e}")
 
-def preprocess():
-    # Run preprocessing
-    get_news_data()
-    posts = load_posts(news_data_file)
-    # Process each post and clean its body
-    for post in posts:
-        post["body"] = parse_html(post["body"])
-    tokenized_posts = tokenize_dataset(posts)
-    return posts, tokenized_posts
+def preprocess_post(post):
+    post["body"] = parse_html(post["body"])
+    post["tokenized_body"] = tokenize_post(post, "spacy")
+    return post
