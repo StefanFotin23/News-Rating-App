@@ -1,11 +1,9 @@
 import spacy
 import gensim
 import gensim.corpora as corpora
-from preprocess_data import preprocess_post, get_news_data, load_posts
+from preprocess_data import preprocess_post
 from pysentimiento import create_analyzer
 from textstat import flesch_reading_ease
-
-news_data_file = "/app/model/news_data.json"
 
 # Load sentiment and emotion analyzers
 nlp = spacy.load("en_core_web_sm")
@@ -47,12 +45,6 @@ def analyze_single_post(post):
 
     return post
 
-# Run preprocessing
-get_news_data()
-posts = load_posts(news_data_file)
-
-post = posts[0]
-
-post = preprocess_post(post)
-analyzed_post = analyze_single_post(post)
-print(analyzed_post)
+def analyze_post(post):
+    post = preprocess_post(post)
+    return analyze_single_post(post)

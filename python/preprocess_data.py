@@ -9,8 +9,8 @@ from transformers import AutoTokenizer
 API_KEY = "7bc719a0-6dc4-465d-a800-583af38ccdaa"
 BASE_URL = "https://content.guardianapis.com/search"
 
-model_path = "/app/model"
-news_data_file = "/app/model/news_data.json"
+dir_path = "/mnt/data"
+news_data_file = "/mnt/data/news_data.json"
 
 # Load spaCy model
 nlp = spacy.load("en_core_web_sm")
@@ -37,7 +37,7 @@ def spacy_tokenize(post):
 def bert_tokenize(post):
     return bert_tokenizer(post["body"], truncation=True, padding=True, return_tensors="pt")
 
-def load_posts(file_path):
+def get_news_posts(file_path):
     """Reads a JSON file and returns a list of posts."""
     try:
         with open(file_path, "r", encoding="utf-8") as file:
@@ -50,7 +50,7 @@ def load_posts(file_path):
         print(f"❌ Error: Failed to decode JSON in '{file_path}'!")
         return []
 
-def get_news_data(topic=None, no_of_news=50):
+def fetch_news_data(topic=None, no_of_news=50):
     # Step 2: Set up request parameters
     if topic:
         params = {
@@ -73,26 +73,27 @@ def get_news_data(topic=None, no_of_news=50):
     data = response.json()
 
     # Step 4: Extract and format the results
-    articles = []
+    # Step 4: Extract and format the results with a dictionary for faster lookup
+    articles = {}
     if "response" in data and "results" in data["response"]:
-        for article in data["response"]["results"]:
-            articles.append({
+        for index, article in enumerate(data["response"]["results"], start=1):
+            articles[index] = {  # Using ID as the dictionary key
                 "title": article["fields"]["headline"],
                 "body": article["fields"]["body"]
-            })
+            }
 
     # Step 5: Save results to a JSON file
-    if os.path.exists(model_path):
-        print(f"✅ Directory exists: {model_path}")
+    if os.path.exists(dir_path):
+        print(f"✅ Directory exists: {dir_path}")
     else:
         print(f"❌ Directory does NOT exist, creating it now...")
-        os.makedirs(model_path, exist_ok=True)
+        os.makedirs(dir_path, exist_ok=True)
 
     # Check write permissions
-    if os.access(model_path, os.W_OK):
-        print(f"✅ You have write permissions for {model_path}")
+    if os.access(dir_path, os.W_OK):
+        print(f"✅ You have write permissions for {dir_path}")
     else:
-        print(f"❌ No write permissions for {model_path}. Try changing permissions.")
+        print(f"❌ No write permissions for {dir_path}. Try changing permissions.")
 
     # Now attempt to create the file
     try:

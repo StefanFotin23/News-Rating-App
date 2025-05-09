@@ -1,24 +1,40 @@
 APP_NAME=news-rating-app
-DOCKERFILE_DIR=dockerfile
-DOCKERFILE_MODEL=Dockerfile-app
-DOCKERFILE_MODEL_BUILD=Dockerfile-model-build
+DOCKERFILE_DIR=docker
+DOCKERFILE_MODEL=Dockerfile
 
-.PHONY: build run clean all run_model
+.PHONY: status get-namespaces get-configmaps get-deployments get-pods get-svc build-image clean apply
+
+status: get-namespaces get-configmaps get-deployments get-pods get-svc
+
+get-namespaces:
+	kubectl get namespaces
+	@echo "\n"
+
+get-configmaps:
+	kubectl get configmaps --all-namespaces
+	@echo "\n"
+
+get-deployments:
+	kubectl get deployments --all-namespaces
+	@echo "\n"
+
+get-pods:
+	kubectl get pods --all-namespaces
+	@echo "\n"
+
+get-svc:
+	kubectl get svc --all-namespaces
+	@echo "\n"
+
+build-image:
+	docker build -t $(APP_NAME) -f $(DOCKERFILE_DIR)/$(DOCKERFILE_MODEL) .
 
 all:
-	make build
-	make run_model
-	make run
+	kind create cluster
+	make apply
 
-build:
-	docker build -t $(APP_NAME)-model -f $(DOCKERFILE_DIR)/$(DOCKERFILE_MODEL_BUILD) .
-	docker build -t $(APP_NAME)-app -f $(DOCKERFILE_DIR)/$(DOCKERFILE_MODEL) .
-
-run_model:
-	docker run --rm -v $(shell pwd)/model:/app/model $(APP_NAME)-model
-
-run:
-	docker run --rm -v $(shell pwd)/model:/app/model $(APP_NAME)-app
+apply:
+	kubectl apply -R -f k8s/
 
 clean:
-	docker rmi $(APP_NAME)-app $(APP_NAME)-model || true
+	docker rmi $(APP_NAME) || true
