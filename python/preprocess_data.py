@@ -38,17 +38,14 @@ def bert_tokenize(post):
     return bert_tokenizer(post["body"], truncation=True, padding=True, return_tensors="pt")
 
 def get_news_posts(file_path):
-    """Reads a JSON file and returns a list of posts."""
+    """Reads a JSON file and returns a dictionary of posts indexed by ID."""
     try:
         with open(file_path, "r", encoding="utf-8") as file:
             posts = json.load(file)  # Load JSON data
-            return posts  # Return the list of posts
-    except FileNotFoundError:
-        print(f"❌ Error: File '{file_path}' not found!")
-        return []
-    except json.JSONDecodeError:
-        print(f"❌ Error: Failed to decode JSON in '{file_path}'!")
-        return []
+            return posts  # Returns a dictionary for efficient lookup
+    except (FileNotFoundError, json.JSONDecodeError) as e:
+        print(f"❌ Error: {e}")
+        return {}
 
 def fetch_news_data(topic=None, no_of_news=50):
     # Step 2: Set up request parameters
@@ -72,12 +69,11 @@ def fetch_news_data(topic=None, no_of_news=50):
     response = requests.get(BASE_URL, params=params)
     data = response.json()
 
-    # Step 4: Extract and format the results
-    # Step 4: Extract and format the results with a dictionary for faster lookup
+    # Step 4: Extract and format the results as a dictionary
     articles = {}
     if "response" in data and "results" in data["response"]:
         for index, article in enumerate(data["response"]["results"], start=1):
-            articles[index] = {  # Using ID as the dictionary key
+            articles[index] = {  # Store each article with a unique ID as the dictionary key
                 "title": article["fields"]["headline"],
                 "body": article["fields"]["body"]
             }
@@ -102,6 +98,8 @@ def fetch_news_data(topic=None, no_of_news=50):
         print(f"✅ File saved successfully at {news_data_file}")
     except Exception as e:
         print(f"❌ Error saving file: {e}")
+
+    return articles
 
 def preprocess_post(post):
     post["body"] = parse_html(post["body"])
