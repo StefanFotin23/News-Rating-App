@@ -7,11 +7,10 @@ from textstat import flesch_reading_ease
 
 # Load sentiment and emotion analyzers
 nlp = spacy.load("en_core_web_sm")
-sentiment_analyzer = create_analyzer(task="sentiment", lang="en")
-emotion_analyzer = create_analyzer(task="emotion", lang="en")
+sentiment_analyzer = create_analyzer(task="sentiment", lang="en", from_tf=True)
+emotion_analyzer = create_analyzer(task="emotion", lang="en", from_tf=True)
 
 def analyze_single_post(post):
-    print(post)
     # Sentiment & Emotion
     sentiment_result = sentiment_analyzer.predict(post["body"])
     emotion_result = emotion_analyzer.predict(post["body"])
@@ -42,6 +41,8 @@ def analyze_single_post(post):
         "lexical_diversity": lexical_diversity,
         "topics": topics
     })
+
+    
 
     return post
 

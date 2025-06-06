@@ -28,9 +28,12 @@ get-svc:
 
 build-image:
 	docker build -t $(APP_NAME) -f $(DOCKERFILE_DIR)/$(DOCKERFILE_MODEL) .
+	docker tag news-rating-app stefanfotin23/news-rating-app
+	docker push stefanfotin23/news-rating-app
 
 all:
 	kind create cluster
+	make build-image
 	make apply
 
 apply:
@@ -38,3 +41,4 @@ apply:
 
 clean:
 	docker rmi $(APP_NAME) || true
+	kind delete cluster

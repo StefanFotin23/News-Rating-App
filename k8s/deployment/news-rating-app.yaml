@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
         - name: news-rating-app
-          image: news-rating-app
+          image: stefanfotin23/news-rating-app
           ports:
             - containerPort: 5000
           volumeMounts:

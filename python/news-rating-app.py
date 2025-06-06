@@ -35,14 +35,10 @@ def analyze_news_post(post_id):
     if not post:
         return jsonify({"error": "Not found"}), 404
     
-    sentiment_result = sentiment_analyzer.predict(post["body"])
+    sentiment_result = analyze_post(post["body"])
     post["sentiment"] = sentiment_result.output
     
     return jsonify(post)
-
-
-
-print(analyze_post(posts[0]))
 
 if __name__ == "__main__":
     news_rating_app.run(host="0.0.0.0", port=5000)
