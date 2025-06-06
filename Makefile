@@ -2,7 +2,7 @@ APP_NAME=news-rating-app
 DOCKERFILE_DIR=docker
 DOCKERFILE_MODEL=Dockerfile
 
-.PHONY: status get-namespaces get-configmaps get-deployments get-pods get-svc build-image clean apply
+.PHONY: status get-namespaces get-configmaps get-deployments get-pods get-svc build-image clean apply port-forward update-image
 
 status: get-namespaces get-configmaps get-deployments get-pods get-svc
 
@@ -35,6 +35,15 @@ all:
 	kind create cluster
 	make build-image
 	make apply
+	
+port-forward:
+	kubectl port-forward svc/news-rating-service 8080:80 &
+
+update-image:
+	kubectl set image deployment/news-rating-app news-rating-app=your-image-name:tag
+
+logs:
+	kubectl get pods -l app=news-rating -o name | xargs -n1 kubectl logs
 
 apply:
 	kubectl apply -R -f k8s/

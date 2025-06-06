@@ -37,7 +37,7 @@ def spacy_tokenize(post):
 def bert_tokenize(post):
     return bert_tokenizer(post["body"], truncation=True, padding=True, return_tensors="pt")
 
-def get_news_posts(file_path):
+def get_news_posts(file_path=news_data_file):
     """Reads a JSON file and returns a dictionary of posts indexed by ID."""
     try:
         with open(file_path, "r", encoding="utf-8") as file:
