@@ -2,7 +2,7 @@ APP_NAME=news-rating-app
 DOCKERFILE_DIR=docker
 DOCKERFILE_MODEL=Dockerfile
 
-.PHONY: status get-namespaces get-configmaps get-deployments get-pods get-svc build-image clean apply port-forward update-image
+.PHONY: status get-namespaces get-configmaps get-deployments get-pods get-svc build-image clean apply port-forward update-image restart delete
 
 status: get-namespaces get-configmaps get-deployments get-pods get-svc
 
@@ -40,7 +40,13 @@ port-forward:
 	kubectl port-forward svc/news-rating-service 8080:80 &
 
 update-image:
-	kubectl set image deployment/news-rating-app news-rating-app=your-image-name:tag
+	kubectl set image deployment/news-rating-app news-rating-app=your-image-name:latest
+
+delete:
+	kubectl delete pods -l app=news-rating
+
+restart:
+	kubectl rollout restart deployment news-rating-app
 
 logs:
 	kubectl get pods -l app=news-rating -o name | xargs -n1 kubectl logs
