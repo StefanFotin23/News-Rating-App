@@ -5,7 +5,14 @@ import os
 import gensim.corpora as corpora
 from preprocess_data import preprocess_post
 from pysentimiento import create_analyzer
-from textstat import flesch_reading_ease
+from textstat import (
+    flesch_reading_ease,
+    smog_index,
+    coleman_liau_index,
+    automated_readability_index
+)
+from collections import Counter
+from textblob import TextBlob
 
 # Load sentiment and emotion analyzers
 nlp = spacy.load("en_core_web_sm")
@@ -16,6 +23,10 @@ dir_path = "/mnt/data"
 news_data_file = "/mnt/data/news_data.json"
 
 def analyze_single_post(post):
+    # Lexical Diversity (using pre-tokenized text)
+    words = post["tokenized_body"]  # Assuming 'tokens' is the pre-tokenized list of words
+    body_text = post["body"]
+
     # Sentiment & Emotion
     sentiment_result = sentiment_analyzer.predict(post["body"])
     emotion_result = emotion_analyzer.predict(post["body"])
@@ -23,12 +34,19 @@ def analyze_single_post(post):
     # Named Entity Recognition (NER) using spaCy (only for named entities, no extra tokenization)
     doc = nlp(post["body"])
     entities = [(ent.text, ent.label_) for ent in doc.ents]
+    entity_counts = dict(Counter([ent.label_ for ent in doc.ents]))
+    pos_counts = dict(Counter([token.pos_ for token in doc]))
 
-    # Readability Score
-    readability = flesch_reading_ease(post["body"])
-
-    # Lexical Diversity (using pre-tokenized text)
-    words = post["tokenized_body"]  # Assuming 'tokens' is the pre-tokenized list of words
+    # Readability Metrics
+    readability_scores = {
+        "flesch": flesch_reading_ease(body_text),
+        "smog_index": smog_index(body_text),
+        "coleman_liau_index": coleman_liau_index(body_text),
+        "automated_readability_index": automated_readability_index(body_text)
+    }
+    
+    # Subjectivity
+    subjectivity = TextBlob(body_text).sentiment.subjectivity
     lexical_diversity = len(set(words)) / len(words) if words else 0
 
     # Topic Modeling (LDA)
@@ -37,14 +55,19 @@ def analyze_single_post(post):
     lda_model = gensim.models.LdaModel(corpus, num_topics=3, id2word=dictionary, passes=10)
     topics = lda_model.print_topics()
 
-    # Attach results
+    # Attach all results
     post.update({
-        "sentiment": sentiment_result.output,  # POSITIVE, NEGATIVE, NEUTRAL
+        "sentiment": sentiment_result.output,
+        "sentiment_probs": sentiment_result.probas,
         "emotion": emotion_result.output,
+        "emotion_probs": emotion_result.probas,
         "entities": entities,
-        "readability": readability,
+        "entity_counts": entity_counts,
+        "pos_counts": pos_counts,
+        "readability_scores": readability_scores,
+        "subjectivity": subjectivity,
         "lexical_diversity": lexical_diversity,
-        "topics": topics
+        "topics": topics,
     })
 
     # Load existing posts from JSON
