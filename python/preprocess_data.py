@@ -73,9 +73,10 @@ def fetch_news_data(topic=None, no_of_news=50):
     articles = {}
     if "response" in data and "results" in data["response"]:
         for index, article in enumerate(data["response"]["results"], start=1):
+            clean_body = parse_html(article["fields"]["body"])
             articles[index] = {  # Store each article with a unique ID as the dictionary key
                 "title": article["fields"]["headline"],
-                "body": article["fields"]["body"]
+                "body": clean_body,
             }
 
     # Step 5: Save results to a JSON file

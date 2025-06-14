@@ -25,9 +25,7 @@ def get_all_news():
 
 @news_rating_app.route("/news/<int:post_id>", methods=["GET"])
 def get_news_post(post_id):
-    post = posts.get(str(post_id))
-    #post = next((p for p in posts if p.get("id") == post_id), None)
-    #post = next(iter(posts.values()))
+    post = posts.get(post_id)
     return jsonify(post) if post else jsonify({
         "error": "Not found",
         "available_post_ids": list(posts.keys())
@@ -36,11 +34,12 @@ def get_news_post(post_id):
 @news_rating_app.route("/news/analyze/<int:post_id>", methods=["GET"])
 def analyze_news_post(post_id):
     """Analyze sentiment of a news article."""
-    post = posts.get(str(post_id))
-    #post = next((p for p in posts if p.get("id") == post_id), None)
-    #post = next(iter(posts.values()))
+    post = posts.get(post_id)
     if not post:
-        return jsonify({"error": "Not found"}), 404
+        return jsonify({
+            "error": "Not found",
+            "available_post_ids": list(posts.keys())
+        }), 404
     
     post = analyze_post(post)
     

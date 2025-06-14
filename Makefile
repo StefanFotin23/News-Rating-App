@@ -40,6 +40,7 @@ port-forward:
 	kubectl port-forward svc/news-rating-service 8080:80 &
 
 update-image:
+	make build-image
 	kubectl set image deployment/news-rating-app news-rating-app=stefanfotin23/news-rating-app
 	make restart
 
