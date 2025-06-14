@@ -40,7 +40,8 @@ port-forward:
 	kubectl port-forward svc/news-rating-service 8080:80 &
 
 update-image:
-	kubectl set image deployment/news-rating-app news-rating-app=your-image-name:latest
+	kubectl set image deployment/news-rating-app news-rating-app=stefanfotin23/news-rating-app
+	make restart
 
 delete:
 	kubectl delete pods -l app=news-rating
